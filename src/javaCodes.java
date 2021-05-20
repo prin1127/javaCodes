@@ -79,7 +79,7 @@ public class javaCodes {
     }
      */
 
-    /*
+    /*4.
     输入一个链表，按链表从尾到头的顺序返回一个ArrayList。
     public static class ListNode{
         public int val;
@@ -131,7 +131,7 @@ public class javaCodes {
     }
     */
 
-    /*
+    /*5.
     根据二叉树的前序遍历和中序遍历的结果，重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
     前序遍历的第一个值为根节点的值，使用这个值将中序遍历结果分成两部分，左部分为树的左子树中序遍历结果，右部分为树的右子树中序遍历的结果。
     时间复杂度 O(N)，空间复杂度 O(N)
@@ -187,6 +187,152 @@ public class javaCodes {
         }
     }
     */
+
+    /*6.
+    给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。
+    注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
+    ① 如果一个节点的右子树不为空，那么该节点的下一个节点是右子树的最左节点；
+    ② 否则，向上找第一个左链接指向的树包含该节点的祖先节点。
+    public class TreeLinkNode {
+        int val;
+        TreeLinkNode left = null;
+        TreeLinkNode right = null;
+        TreeLinkNode next = null;
+        TreeLinkNode(int val) {
+            this.val = val;
+        }
+    }
+    public TreeLinkNode GetNext(TreeLinkNode pNode) {
+        if (pNode.right != null) {
+            TreeLinkNode node = pNode.right;
+            while (node.left != null)//最左，所以要循环
+                node = node.left;
+            return node;
+        } else {
+            while (pNode.next != null) {
+                TreeLinkNode parent = pNode.next;
+                if (parent.left == pNode)//左孩子的父结点
+                    return parent;
+                pNode = pNode.next;//右孩子的祖先
+            }
+        }
+        return null;
+    }
+    */
+
+    /*7.
+    用两个栈来实现一个队列，完成队列的 Push 和 Pop 操作。
+    in 栈用来处理入栈（push）操作，out 栈用来处理出栈（pop）操作。
+    一个元素进入 in 栈之后，出栈的顺序被反转。当元素要出栈时，需要先进入 out 栈，此时元素出栈顺序再一次被反转，
+    因此出栈顺序就和最开始入栈顺序是相同的，先进入的元素先退出，这就是队列的顺序。
+    Stack<Integer> in = new Stack<Integer>();
+    Stack<Integer> out = new Stack<Integer>();
+    public void push(int node) {
+        in.push(node);
+    }
+    public int pop() throws Exception {
+        if (out.isEmpty())
+            while (!in.isEmpty())
+                out.push(in.pop());
+        if (out.isEmpty())
+            throw new Exception("queue is empty");
+        return out.pop();
+    } */
+
+    /*8.
+    求斐波那契数列的第 n 项，n <= 39.
+    递归：时间复杂度 O(2^N)
+    public int Fibonacci(int n) {
+        if (n==0 || n==1)
+            return n;
+        return Fibonacci(n-1) + Fibonacci(n-2);
+    }
+    动态规划：
+    递归是将一个问题划分成多个子问题求解，动态规划也是如此，但是动态规划会把子问题的解缓存起来，从而避免重复求解子问题。
+    时间复杂度 O(N)，空间复杂度 O(1)
+    public int Fibonacci(int n) {
+        if (n <= 1)
+            return n;
+        int pre2 = 0, pre1 = 1;
+        int fib = 0;
+        for (int i = 2; i <= n; i++) {
+            fib = pre2 + pre1;
+            pre2 = pre1;
+            pre1 = fib;
+        }
+        return fib;
+    }
+     */
+
+    /*9.
+    一只青蛙一次可以跳上 1 级台阶，也可以跳上 2 级。求该青蛙跳上一个 n 级的台阶总共有多少种跳法.
+    逆向思维，假设f[i]表示在第i个台阶上可能的方法数。如果从第n个台阶进行下台阶，下一步有2种可能，走到第n-1个台阶，或者走到第n-2个台阶。
+    所以f[n] = f[n-1] + f[n-2]。f[0] = f[1] = 1。
+    动态规划：时间复杂度 O(N)，空间复杂度 O(1)
+    public int JumpFloor(int n) {
+        if (n <= 2)
+            return n;
+        int pre2 = 1, pre1 = 2;
+        int result = 1;
+        for (int i = 2; i < n; i++) {
+            result = pre2 + pre1;
+            pre2 = pre1;
+            pre1 = result;
+        }
+        return result;
+    }
+    */
+
+    /*10.
+    可以用 2*1 的小矩形横着或者竖着去覆盖更大的矩形。请问用 n 个 2*1 的小矩形无重叠地覆盖一个 2*n 的大矩形，总共有多少种方法？
+    f[n] = f[n-1] + f[n-2]，初始条件f[1] = 1, f[2] =2
+    动态规划：
+    public int RectCover(int n) {
+        if (n <= 2)
+            return n;
+        int pre2 = 1, pre1 = 2;
+        int result = 0;
+        for (int i = 3; i <= n; i++) {
+            result = pre2 + pre1;
+            pre2 = pre1;
+            pre1 = result;
+        }
+        return result;
+    }
+     */
+
+    /*11.
+    一只青蛙一次可以跳上 1 级台阶，也可以跳上 2 级... 它也可以跳上 n 级。求该青蛙跳上一个 n 级的台阶总共有多少种跳法
+    跳上 n-1 级台阶，可以从 n-2 级跳 1 级上去，也可以从 n-3 级跳 2 级上去...，那么f(n-1) = f(n-2) + f(n-3) + ... + f(0)
+    同样，跳上 n 级台阶，可以从 n-1 级跳 1 级上去，也可以从 n-2 级跳 2 级上去... ，那么f(n) = f(n-1) + f(n-2) + ... + f(0)
+    综上可得f(n) - f(n-1) = f(n-1)，即f(n) = 2*f(n-1)，等比数列
+    public int JumpFloorII(int target) {
+        //直接根据等比数列计算结果：
+        //return (int) Math.pow(2, target - 1);
+        int[] dp = new int[target];
+        Arrays.fill(dp, 1);
+        for (int i = 1; i < target; i++)//f(n) = f(n-1) + f(n-2) + ... + f(0)
+            for (int j = 0; j < i; j++)
+                dp[i] += dp[j];
+        return dp[target - 1];
+    }
+    */
+    /*12.
+    股票的最大利润。可以有一次买入和一次卖出，那么买入必须在前。求最大收益。
+    贪心算法：假设第 i 轮进行卖出操作，买入操作价格应该在 i 之前并且价格最低。*/
+    public static int maxProfit(int[] prices) {
+        if (prices == null || prices.length == 0)
+            return 0;
+        int soFarMin = prices[0];
+        int maxProfit = 0;
+        for (int i = 1; i < prices.length; i++) {
+            soFarMin = Math.min(soFarMin, prices[i]);
+            maxProfit = Math.max(maxProfit, prices[i] - soFarMin);
+        }
+        return maxProfit;
+    }
+
+
     public static void main(String[] args) {
         /*1.
         int nums[]={2, 3, 1, 0, 2, 5};
