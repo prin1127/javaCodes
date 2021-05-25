@@ -317,9 +317,10 @@ public class javaCodes {
         return dp[target - 1];
     }
     */
+
     /*12.
     股票的最大利润。可以有一次买入和一次卖出，那么买入必须在前。求最大收益。
-    贪心算法：假设第 i 轮进行卖出操作，买入操作价格应该在 i 之前并且价格最低。*/
+    贪心算法：假设第 i 轮进行卖出操作，买入操作价格应该在 i 之前并且价格最低。
     public static int maxProfit(int[] prices) {
         if (prices == null || prices.length == 0)
             return 0;
@@ -330,7 +331,39 @@ public class javaCodes {
             maxProfit = Math.max(maxProfit, prices[i] - soFarMin);
         }
         return maxProfit;
+    }*/
+
+    /*13.
+    旋转数组的最小数。把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。
+    输入一个非递减排序的数组的一个旋转，输出旋转数组的最小元素。
+    在一个有序数组中查找一个元素可以用二分查找，二分查找也称为折半查找，每次都能将查找区间减半，这种折半特性的算法时间复杂度都为 O(logN)。
+    当 nums[m] <= nums[h] 的情况下，说明解在 [l, m] 之间，此时令 h = m；否则解在 [m + 1, h] 之间，令 l = m + 1。
+
+    public int minNumberInRotateArray(int[] nums) {
+        if (nums.length == 0)
+            return 0;
+        int l = 0, h = nums.length - 1;
+        while (l < h) {
+            int m = l + (h - l) / 2;
+            if (nums[l] == nums[m] && nums[m] == nums[h])
+                return minNumber(nums, l, h);//相等元素顺序查找，eg：{1,1,1,0,1}
+            else if (nums[m] <= nums[h])
+                h = m;
+            else
+                l = m + 1;
+        }
+        return nums[l];
     }
+    private int minNumber(int[] nums, int l, int h) {
+        for (int i = l; i < h; i++)
+            if (nums[i] > nums[i + 1])
+                return nums[i + 1];
+        return nums[l];
+    }
+    */
+
+
+
 
 
     public static void main(String[] args) {
@@ -357,6 +390,105 @@ public class javaCodes {
         int preorder[] = {1,2,3,4,5,6,7}, inorder[] = {3,2,4,1,6,5,7};
         TreeNode root = reConstructBinaryTree(preorder,inorder);
         PrintFromTopToBottom(root);*/
+        /*14.
+        Scanner in=new Scanner(System.in);
+        String input=in.next();
+        String[] inputs = input.split(",") ;
+        char[]array=inputs[0].toCharArray();
+        int rows =Integer.parseInt(inputs[1]);
+        int rols=Integer.parseInt(inputs[2]);
+        char[] str=inputs[3].toCharArray();
+        Solution s=new Solution();
+        System.out.println(s.hasPath(array,rows,rols,str));*/
+
     }
+}
+
+class Solution{
+    /*14.
+    矩阵中路径
+    DFS
+    private final static int[][] next = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+    private int rows;
+    private int cols;
+    public boolean hasPath(char[] array, int rows, int cols, char[] str) {
+        if (rows == 0 || cols == 0)
+            return false;
+        this.rows = rows;
+        this.cols = cols;
+        boolean[][] marked = new boolean[rows][cols];
+        char[][] matrix = buildMatrix(array);
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                if (backtracking(matrix, str, marked, 0, i, j))//先比较标记后回溯
+                    return true;
+        return false;
+    }
+    private boolean backtracking(char[][] matrix, char[] str, boolean[][] marked, int pathLen, int r,int c) {
+        if (pathLen == str.length)//已找到字符串长度的一条路径
+            return true;
+        if (r < 0 || r >= rows || c < 0 || c >= cols || matrix[r][c] != str[pathLen] || marked[r][c])
+            return false;
+        marked[r][c] = true;//matrix[r][c] == str[pathLen],将当前位置标记走过
+        for (int[] n : next)//判断当前位置的上下左右
+            if (backtracking(matrix, str, marked, pathLen + 1, r + n[0], c + n[1]))
+                return true;//回溯到当前位置
+        marked[r][c] = false;//不符合条件则将当前位置取消标记
+        return false;
+    }
+    private char[][] buildMatrix(char[] array) {//根据数组构建矩阵
+        char[][] matrix = new char[rows][cols];
+        for (int i = 0, idx = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                matrix[i][j] = array[idx++];
+        return matrix;
+    }*/
+    /*15.
+    机器人的运动范围
+    地上有一个 m 行和 n 列的方格。一个机器人从坐标 (0, 0) 的格子开始移动，每一次只能向左右上下四个方向移动一格，
+    但是不能进入行坐标和列坐标的数位之和大于 k 的格子。例如，当 k 为 18 时，机器人能够进入方格 (35,37)，因为 3+5+3+7=18。
+    但是，它不能进入方格 (35,38)，因为3+5+3+8=19。请问该机器人能够达到多少个格子？
+    DFS
+    private static final int[][] next = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+    private int cnt = 0;
+    private int rows;
+    private int cols;
+    private int threshold;
+    private int[][] digitSum;
+    public int movingCount(int threshold, int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        this.threshold = threshold;
+        initDigitSum();
+        boolean[][] marked = new boolean[rows][cols];
+        dfs(marked, 0, 0);
+        return cnt;
+    }
+    private void dfs(boolean[][] marked, int r, int c) {
+        if (r < 0 || r >= rows || c < 0 || c >= cols || marked[r][c])
+            return;
+        marked[r][c] = true;//到达当前位置
+        if (this.digitSum[r][c] > this.threshold)//超过限定条件
+            return;
+        cnt++;//当前位置的上下左右
+        for (int[] n : next)
+            dfs(marked, r + n[0], c + n[1]);
+    }
+    private void initDigitSum() {//生成各位置的行列数位和
+        int[] digitSumOne = new int[Math.max(rows, cols)];
+        for (int i = 0; i < digitSumOne.length; i++) {//计算（十位数+个位数+...）
+            int n = i;
+            while (n > 0) {
+                digitSumOne[i] += n % 10;
+                n /= 10;//个位数则结束循环，十位...数则也加进来
+            }
+        }
+        this.digitSum = new int[rows][cols];
+        for (int i = 0; i < this.rows; i++)//计算（行数位和+列数位和）
+            for (int j = 0; j < this.cols; j++)
+                this.digitSum[i][j] = digitSumOne[i] + digitSumOne[j];
+    }
+    */
+
 }
 
