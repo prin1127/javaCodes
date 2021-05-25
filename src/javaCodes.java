@@ -362,8 +362,99 @@ public class javaCodes {
     }
     */
 
+    /*16.
+    整数拆分/剪绳子
+    把一根绳子剪成多段，并且使得每段的长度乘积最大。
+    给定一个正整数 n，将其拆分为至少两个正整数的和，并使这些整数的乘积最大化。 返回你可以获得的最大乘积。
+    递归：f(n) = max(f(i)*f(n-i))
+    贪心算法：根据（周长、面积...）数学推理可知尽可能裁剪长度为3的段时乘积最大，其次是长度为2的段。
+    尽可能多剪长度为 3 的绳子，并且不允许有长度为 1 的绳子出现。
+    如果出现了，就从已经切好长度为 3 的绳子中拿出一段与长度为 1 的绳子重新组合，把它们切成两段长度为 2 的绳子。
+    public int integerBreak(int n) {
+        if (n < 2)
+            return 0;
+        if (n == 2)
+            return 1;
+        if (n == 3)
+            return 2;
+        int timesOf3 = n / 3;
+        if (n - timesOf3 * 3 == 1)//出现长度为1的段
+            timesOf3--;
+        int timesOf2 = (n - timesOf3 * 3) / 2;
+        return (int) (Math.pow(3, timesOf3)) * (int) (Math.pow(2, timesOf2));
+    }
+    动态规划：
+    动态规划求解问题的四个特征：
+    ①求一个问题的最优解；
+    ②整体的问题的最优解是依赖于各个子问题的最优解；
+    ③小问题之间还有相互重叠的更小的子问题；
+    ④从上往下分析问题，从下往上求解问题
+    一般，动态规划有以下几种分类：
+    ①最值型动态规划，比如求最大，最小值是多少
+    ②计数型动态规划，比如换硬币，有多少种换法
+    ③坐标型动态规划，比如在m*n矩阵求最值型，计数型，一般是二维矩阵
+    ④区间型动态规划，比如在区间中求最值
+    public int integerBreak(int n) {
+        if (n < 2)
+            return 0;
+        if(n==2)
+            return 1;
+        if(n==3)
+            return 2;
 
+        int[] dp = new int[n+1];
+        dp[1]=1;
+        dp[2]=2;
+        dp[3]=3;
+        for (int i = 4; i <= n; i++) {
+            int res=0;//记录最大的
+            for (int j = 1; j <=i/2 ; j++) {
+                res=Math.max(res,dp[j]*dp[i-j]);
+            }
+            dp[i]=res;
+        }
+        return dp[n];
+    }
+    */
 
+    /*17.
+    二进制中 1 的个数
+    输入一个整数，输出该数32位二进制表示中1的个数。其中负数用补码表示。
+    n&(n-1)，对从右向左的第一位1直接判断，遇到0直接略过。
+    n:1101000, n-1: 1100111 那么n&(n-1): 1100000
+    时间复杂度：O(M)，其中 M 表示 1 的个数。
+    public int NumberOf1(int n) {
+        int cnt = 0;
+        while (n != 0) {
+            cnt++;
+            n &= (n - 1);
+        }
+        return cnt;
+    }
+     */
+
+    /*18.
+    数值的整数次方
+    给定一个 double 类型的浮点数 base 和 int 类型的整数 exponent，求 base 的 exponent 次方。
+    递归：将base的exponent 次方拆分为base*base的exponent/2 次方
+    每次递归，exponent减半，则时间复杂度：log(N)
+
+    public double Power(double base, int exponent) {
+        if (exponent == 0)
+            return 1;
+        if (exponent == 1)
+            return base;
+        boolean isNegative = false;
+        if (exponent < 0) {//exponent为负数
+            exponent = -exponent;
+            isNegative = true;
+        }
+        double pow = Power(base * base, exponent / 2);
+        if (exponent % 2 != 0)//exponent为奇数
+            pow = pow * base;
+        return isNegative ? 1 / pow : pow;
+    }
+     */
 
 
     public static void main(String[] args) {
@@ -400,7 +491,12 @@ public class javaCodes {
         char[] str=inputs[3].toCharArray();
         Solution s=new Solution();
         System.out.println(s.hasPath(array,rows,rols,str));*/
-
+        /*19.
+        Scanner in=new Scanner(System.in);
+        String input=in.next();
+        int n=Integer.parseInt(input);
+        Solution s=new Solution();
+        s.print1ToMaxOfNDigits(n); */
     }
 }
 
@@ -489,6 +585,61 @@ class Solution{
                 this.digitSum[i][j] = digitSumOne[i] + digitSumOne[j];
     }
     */
+    /*19.
+     打印从 1 到最大的 n 位数
+     输入数字 n，按顺序打印出从 1 到最大的 n 位十进制数。比如输入 3，则打印出 1、2、3 一直到最大的 3 位数即999。
+     由于 n 位数可能会非常大，因此不能直接用 int 表示数字，而是用 char 数组进行存储。
+     回溯法
 
+    public void print1ToMaxOfNDigits(int n) {
+        if (n <= 0)
+            return;
+        char[] number = new char[n];
+        print1ToMaxOfNDigits(number, 0);
+    }
+    private void print1ToMaxOfNDigits(char[] number, int digit) {
+        if (digit == number.length) {
+            printNumber(number);
+            return;
+        }
+        for (int i = 0; i < 10; i++) {
+            number[digit] = (char) (i + '0');
+            print1ToMaxOfNDigits(number, digit + 1);
+        }
+    }
+    private void printNumber(char[] number) {
+        int index = 0;
+        while (index < number.length && number[index] == '0')
+            index++;
+        while (index < number.length)
+            System.out.print(number[index++]);
+        System.out.println();
+    }
+
+//    过程如下：
+//    开始digit=0，i=0,number[0]=0,digit+1
+//    digit'=1,i=0,number[1]=0,digit'+1
+//    digit''=2,printNumber打印空,return
+//    digit'=1,i=1,number[1]=1,digit'+1
+//    digit''=2,printNumber打印01,return
+//    digit'=1,i=2,number[1]=2,digit'+1
+//    digit''=2,printNumber打印02,return
+//    ...
+//    digit'=1,i=9,number[1]=9,digit'+1
+//    digit''=2,printNumber打印09,return
+//
+//    digit=0，i=1,number[0]=1,digit+1
+//    digit'=1,i=0,number[1]=0,digit'+1
+//    digit''=2,printNumber打印10,return
+//    digit'=1,i=1,number[1]=1,digit'+1
+//    digit''=2,printNumber打印11,return
+//    digit'=1,i=2,number[1]=2,digit'+1
+//    digit''=2,printNumber打印12,return
+//    ...
+//    digit'=1,i=9,number[1]=9,digit'+1
+//    digit''=2,printNumber打印19,return
+//
+//    ...
+*/
 }
 
