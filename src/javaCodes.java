@@ -497,6 +497,14 @@ public class javaCodes {
         int n=Integer.parseInt(input);
         Solution s=new Solution();
         s.print1ToMaxOfNDigits(n); */
+        /*20.
+        Scanner in=new Scanner(System.in);
+        String input=in.next();
+        String[] inputs = input.split(",") ;
+        char[]str=inputs[0].toCharArray();
+        char[]pattern =inputs[1].toCharArray();
+        Solution s = new Solution();
+        System.out.println(s.match(str,pattern));*/
     }
 }
 
@@ -640,6 +648,47 @@ class Solution{
 //    digit''=2,printNumber打印19,return
 //
 //    ...
+*/
+    /*20.
+    正则表达式匹配。
+    请实现一个函数用来匹配包括'.'和'*'的正则表达式。模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（包含0次）。
+    在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但是与"aa.a"和"ab*a"均不匹配。
+    public boolean matchStr(char[] str, int i, char[] pattern, int j) {
+        if (i == str.length && j == pattern.length) { // str和pattern都为空
+            return true;
+        } else if (j == pattern.length) { // pattern为空
+            return false;
+        }
+
+        boolean flag = false;
+        boolean next = (j + 1 < pattern.length && pattern[j + 1] == '*');
+        if (next) {// pattern下一个字符是'*'
+            if (i < str.length && (pattern[j] == '.' || str[i] == pattern[j])) { // pattern当前字符匹配，下一字符为*
+                return matchStr(str, i, pattern, j + 2) || matchStr(str, i + 1, pattern, j)||matchStr(str, i + 1, pattern, j+2);//当前字符出现1次或多次
+            } else {// pattern当前字符无法匹配，下一字符为*，则用下下个字符来跟str匹配比较
+                return matchStr(str, i, pattern, j + 2);//当前字符出现0次
+            }
+        } else {// pattern下一个字符不是'*'
+            if (i < str.length && (pattern[j] == '.' || str[i] == pattern[j])) {// pattern当前字符匹配，下一字符不是*
+                return matchStr(str, i + 1, pattern, j + 1);
+            } else {// pattern当前字符不匹配，下一字符不是*
+                return false;
+            }
+        }
+    }
+
+    public boolean match(char[] str, char[] pattern) {
+        return matchStr(str, 0, pattern, 0);
+    }
+//    当模式中的第二个字符不是“*”时：
+//        如果字符串第一个字符和模式中的第一个字符相匹配，那么字符串和模式都后移一个字符，然后匹配剩余的。
+//        如果字符串第一个字符和模式中的第一个字符相不匹配，直接返回false。
+//    当模式中的第二个字符是“*”时：
+//        如果字符串第一个字符跟模式第一个字符不匹配，则模式后移2个字符，继续匹配。
+//        如果字符串第一个字符跟模式第一个字符匹配，可以有3种匹配方式：
+//            模式后移2字符，相当于x*被忽略；
+//            字符串后移1字符，模式后移2字符，相当于x*算一次。
+//            符串后移1字符，模式不变，即继续匹配字符下一位，因为*可以匹配多位。
 */
 }
 
