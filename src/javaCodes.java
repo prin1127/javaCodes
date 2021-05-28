@@ -565,6 +565,141 @@ public class javaCodes {
     }
     */
 
+    /*24.
+    调整数组顺序使奇数位于偶数前面
+    1,2,3,4,5->1,3,5,2,4
+    需要保证奇数和奇数，偶数和偶数之间的相对位置不变。
+    public void reOrderArray(int[] nums) {
+        int oddCnt = 0;// 奇数个数
+        for (int val : nums)
+            if (val % 2 == 1)
+                oddCnt++;
+        int[] copy = nums.clone();
+        int i = 0, j = oddCnt;
+        for (int num : copy) {
+            if (num % 2 == 1)
+                nums[i++] = num;//从0开始放奇数个
+            else
+                nums[j++] = num;//从oddCnt位置开始放偶数个
+        }
+    }
+    */
+
+    public class ListNode {
+        int val;
+        ListNode next = null;
+        ListNode(int val) {
+            this.val = val;
+        }
+    }
+    /*25.
+    链表中倒数第k个节点
+    输入一个链表，输出该链表中倒数第k个结点。
+    设链表的长度为 N。设两个指针 P1 和 P2，先让 P1 移动 K 个节点，则还有 N - K 个节点可以移动。
+    此时让 P1 和 P2 同时移动，可以知道当 P1 移动到链表结尾时，P2 移动到 N - K 个节点处，该位置就是倒数第 K 个节点。
+    public ListNode FindKthToTail(ListNode head, int k) {
+        if (head == null)
+            return null;
+        ListNode P1 = head;
+        while (P1 != null && k-- > 0)
+            P1 = P1.next;//先让 P1 移动 K 个节点
+        if (k > 0)//超过链表长度
+            return null;
+        ListNode P2 = head;
+        while (P1 != null) {//让 P1 移动到链表结尾
+            P1 = P1.next;
+            P2 = P2.next;
+        }
+        return P2;//P2 移动到 N - K 个节点处
+    }
+     */
+
+    /*26.
+     链表中环的入口结点
+     一个链表中包含环，请找出该链表的环的入口结点。要求不能使用额外的空间。
+     （若允许使用额外的空间，则单链表遍历，hashset...）
+    public ListNode EntryNodeOfLoop(ListNode pHead) {
+        if (pHead == null || pHead.next == null)
+            return null;
+        ListNode slow = pHead, fast = pHead;
+        do {
+            fast = fast.next.next;//指针 fast 每次移动两个节点
+            slow = slow.next;//指针 slow 每次移动一个节点
+        } while (slow != fast);//第一次相遇时停止移动
+        fast = pHead;// fast 重新从头开始移动
+        while (slow != fast) {
+            slow = slow.next;
+            fast = fast.next;
+        }//fast 和 slow 将在环入口点相遇
+        return slow;
+    }
+    */
+
+    /*27.
+    反转链表
+    迭代
+    public ListNode ReverseList(ListNode head) {
+        ListNode newList = new ListNode(-1);
+        while (head != null) {//每次从原链表头取一个节点，加到新链表（-1）节点后面，形成倒序
+            ListNode tmp = head.next;
+            head.next = newList.next;
+            newList.next = head;
+            head = tmp;
+        }
+        return newList.next;//newList为（-1）节点
+    }
+    递归
+    public ListNode ReverseList(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+        ListNode tmp = head.next;
+        head.next = null;//先顺序把节点断开
+        ListNode newHead = ReverseList(tmp);
+        tmp.next = head;//再逆序把节点链接
+        return newHead;
+    }
+     */
+
+    /*28.
+    合并两个排序的链表。
+    输入两个单调递增的链表，输出两个链表合成后的链表，当然我们需要合成后的链表满足单调不减规则。
+    递归
+    public ListNode Merge(ListNode list1, ListNode list2) {
+        if (list1 == null)
+            return list2;
+        if (list2 == null)
+            return list1;
+        if (list1.val <= list2.val) {
+            list1.next = Merge(list1.next, list2);
+            return list1;
+        } else {
+            list2.next = Merge(list1, list2.next);
+            return list2;
+        }
+    }
+    迭代
+    public ListNode Merge(ListNode list1, ListNode list2) {
+        ListNode head = new ListNode(-1);
+        ListNode cur = head;
+        while (list1 != null && list2 != null) {//不断把较小的值加到head节点链表里
+            if (list1.val <= list2.val) {
+                cur.next = list1;
+                list1 = list1.next;
+            } else {
+                cur.next = list2;
+                list2 = list2.next;
+            }
+            cur = cur.next;
+        }
+        if (list1 != null)//list2 == null
+            cur.next = list1;
+        if (list2 != null)//list1 == null
+            cur.next = list2;
+        return head.next;
+    }
+     */
+
+
     public static void main(String[] args) {
         /*1.
         int nums[]={2, 3, 1, 0, 2, 5};
