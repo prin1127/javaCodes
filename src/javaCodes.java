@@ -456,6 +456,38 @@ public class javaCodes {
     }
      */
 
+    /*21.
+     在 O(1) 时间内删除链表节点
+    public class ListNode{
+        public int val;
+        public ListNode next;
+        public ListNode(){}
+        public ListNode(int val){
+            this.val = val;
+        }
+    }
+    public ListNode deleteNode(ListNode head, ListNode tobeDelete) {
+        if (head == null || tobeDelete == null)
+            return null;
+        if (tobeDelete.next != null) {
+            // 要删除的节点不是尾节点
+            ListNode tmp = tobeDelete.next;
+            tobeDelete.val = tmp.val;
+            tobeDelete.next = tmp.next;
+        } else {
+            if (head == tobeDelete)
+                // 只有一个节点
+                head = null;
+            else {
+                ListNode cur = head;
+                while (cur.next != tobeDelete)
+                    cur = cur.next;//找到尾节点的前一个节点
+                cur.next = null;
+            }
+        }
+        return head;
+    }
+    */
 
     public static void main(String[] args) {
         /*1.
