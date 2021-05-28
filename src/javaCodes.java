@@ -489,6 +489,82 @@ public class javaCodes {
     }
     */
 
+    /*22.
+    删除链表中重复的结点
+    1->2->2->3->3->4
+    1->4
+
+    public static class ListNode{
+        public int val;
+        public ListNode next;
+        public ListNode(){}
+        public ListNode(int val){
+            this.val = val;
+        }
+    }
+    public static ListNode deleteDuplication(ListNode pHead) {
+        if (pHead == null || pHead.next == null)//空链表或仅有一个节点的链表
+            return pHead;
+        ListNode tmp = pHead.next;
+        if (pHead.val == tmp.val) {// 当前节点是重复节点
+            while (tmp != null && pHead.val == tmp.val)// 跳过值与当前节点相同的全部节点，找到第一个与当前节点不同的节点
+                tmp = tmp.next;
+            return deleteDuplication(tmp);// 从第一个与当前结点不同的结点继续递归
+        } else {
+            pHead.next = deleteDuplication(pHead.next);// 保留当前节点，从下一个节点继续递归
+            return pHead;
+        }
+    }
+    */
+
+    /*23.
+    表示数值的字符串
+    请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。
+    例如，字符串"+100","5e2","-123","3.1416"和"-1E-16"都表示数值。 但是"12e","1a3.14","1.2.3","+-5"和"12e+4.3"都不是。
+    分类讨论各情况：
+    ①+-号后面必定为数字或后面为.（-.123 = -0.123）
+    ②+-号只出现在第一位或在eE的后一位
+    ③.后面必定为数字或为最后一位（233. = 233.0）
+    ④eE后面必定为数字或+-号
+    public boolean isNumeric(char[] str) {
+        boolean point = false, exp = false; // 标志小数点和指数
+        for (int i = 0; i < str.length; i++) {
+            if (str[i] == '+' || str[i] == '-') {
+                if (i + 1 == str.length || !(str[i + 1] >= '0' && str[i + 1] <= '9' || str[i + 1] == '.'))  // +-号后面必定为数字 或 后面为.（-.123 = -0.123）
+                    return false;
+                if (!(i == 0 || str[i-1] == 'e' || str[i-1] == 'E'))  // +-号只出现在第一位或eE的后一位
+                    return false;
+            } else if (str[i] == '.') {
+                if (point || exp || !(i + 1 < str.length && str[i + 1] >= '0' && str[i + 1] <= '9'))  // .后面必定为数字 或为最后一位（233. = 233.0）
+                    return false;
+                point = true;
+            } else if (str[i] == 'e' || str[i] == 'E') {
+                if (exp || i + 1 == str.length || !(str[i + 1] >= '0' && str[i + 1] <= '9' || str[i + 1] == '+' || str[i + 1] == '-'))  // eE后面必定为数字或+-号
+                    return false;
+                exp = true;
+            } else if (str[i] >= '0' && str[i] <= '9') {//数字
+            } else {//字母、其他符号等
+                return false;
+            }
+        }
+        return true;
+    }
+    正则表达式[+-]?\\d*(\\.\\d+)?([eE][+-]?\\d+)?
+    [] ： 字符集合
+    () ： 分组
+    ? ： 重复 0 ~ 1次
+    + ： 重复 1 ~ n次
+    * ： 重复 0 ~ n次
+    . ： 任意字符
+    \\. ： 转义后的 .
+    \\d ： 数字
+    public static boolean isNumeric(char[] str) {
+        if (str == null || str.length == 0)
+            return false;
+        return new String(str).matches("[+-]?\\d*(\\.\\d*)?([eE][+-]?\\d+)?");
+    }
+    */
+
     public static void main(String[] args) {
         /*1.
         int nums[]={2, 3, 1, 0, 2, 5};
@@ -537,6 +613,28 @@ public class javaCodes {
         char[]pattern =inputs[1].toCharArray();
         Solution s = new Solution();
         System.out.println(s.match(str,pattern));*/
+        /*22.
+        Scanner in=new Scanner(System.in);
+        String input=in.next();
+        String[] inputs = input.split(",") ;
+        int leng=inputs.length;
+        ListNode [] nodes=new ListNode[leng];
+        for(int i=0;i<leng;i++){
+            nodes[i]=new ListNode(Integer.parseInt(inputs[i]));
+        }
+        for(int i=0;i<leng-1;i++){
+            nodes[i].next=nodes[i+1];
+        }
+        ListNode renode=deleteDuplication(nodes[0]);
+        while(renode!=null){
+            System.out.print(renode.val+" ");
+            renode=renode.next;
+        } */
+        /*23.
+        Scanner in=new Scanner(System.in);
+        String input=in.next();
+        char[] inputs=input.toCharArray();
+        System.out.println(isNumeric(inputs));  */
     }
 }
 
@@ -722,5 +820,7 @@ class Solution{
 //            字符串后移1字符，模式后移2字符，相当于x*算一次。
 //            符串后移1字符，模式不变，即继续匹配字符下一位，因为*可以匹配多位。
 */
+
+
 }
 
