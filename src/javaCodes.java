@@ -909,6 +909,113 @@ public class javaCodes {
         }
     }
     */
+    public static class TreeNode {
+        int val;
+        TreeNode left = null;
+        TreeNode right = null;
+        public TreeNode(int val) {
+            this.val = val;
+        }
+    }
+    /*36.
+    从上往下打印二叉树
+    从上往下打印出二叉树的每个节点，同层节点从左至右打印。
+    队列：尾插入，头删除。
+    queue函数：容量不够或队列为空时不会抛异常：offer（添加队尾元素）、peek（访问队头元素）、poll（访问队头元素并移除）
+              容量不够或队列为空时抛异常：add、element（访问队列元素）、remove（访问队头元素并移除）
+    public static ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        if(root == null)
+            return result;
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);//添加队尾元素
+        while(!queue.isEmpty()){
+            TreeNode temp = queue.poll();//访问队头元素并移除
+            result.add(temp.val);
+            if(temp.left != null)
+                queue.offer(temp.left);
+            if(temp.right != null)
+                queue.offer(temp.right);
+        }
+        return result;
+    }
+     */
+    /*37.
+    把二叉树打印成多行
+    在上题基础上，将节点数按层保存
+    public static ArrayList<ArrayList<Integer>> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        if(root == null)
+            return result;
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);//添加队尾元素
+        while(!queue.isEmpty()){
+            int size=queue.size();//每次循环，size都为该层节点数
+            ArrayList<Integer>list=new ArrayList<Integer>();
+            for(int i=0;i<size;i++){
+                TreeNode temp = queue.poll();//访问队头元素并移除
+                list.add(temp.val);
+                if(temp.left != null)
+                    queue.offer(temp.left);
+                if(temp.right != null)
+                    queue.offer(temp.right);
+            }
+            result.add(list);
+        }
+        return result;
+    }
+     */
+    /*38.
+    按之字形顺序打印二叉树
+    请实现一个函数按照之字形打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右至左的顺序打印，第三行按照从左到右的顺序打印，其他行以此类推。
+    在上题基础上加一个逆序判断
+    public static ArrayList<ArrayList<Integer>> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        if(root == null)
+            return result;
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.offer(root);//添加队尾元素
+        boolean reverse=false;
+        while(!queue.isEmpty()){
+            int size=queue.size();//每次循环，size都为该层节点数
+            ArrayList<Integer>list=new ArrayList<Integer>();
+            for(int i=0;i<size;i++){
+                TreeNode temp = queue.poll();//访问队头元素并移除
+                list.add(temp.val);
+                if(temp.left != null)
+                    queue.offer(temp.left);
+                if(temp.right != null)
+                    queue.offer(temp.right);
+            }
+            if(reverse)
+                Collections.reverse(list);
+            result.add(list);
+            reverse=!reverse;
+        }
+        return result;
+    }
+    */
+    /*39.
+    二叉搜索树的后序遍历序列
+    输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。假设输入的数组的任意两个数字都互不相同。
+    public boolean VerifySquenceOfBST(int[] sequence) {
+        if (sequence == null || sequence.length == 0)
+            return false;
+        return verify(sequence, 0, sequence.length - 1);
+    }
+    private boolean verify(int[] sequence, int first, int last) {
+        if (last - first <= 1)//遍历结束
+            return true;
+        int rootVal = sequence[last];//根节点
+        int cutIndex = first;
+        while (cutIndex < last && sequence[cutIndex] <= rootVal)//左子树，节点值小于根节点
+            cutIndex++;
+        for (int i = cutIndex; i < last; i++)
+            if (sequence[i] < rootVal)//右子树节点值小于根节点，不符合二叉搜索树条件
+                return false;
+        return verify(sequence, first, cutIndex - 1) && verify(sequence, cutIndex, last - 1);//分别对左右子树递归判断
+    }
+    */
 
 
     public static void main(String[] args) {
@@ -981,6 +1088,36 @@ public class javaCodes {
         String input=in.next();
         char[] inputs=input.toCharArray();
         System.out.println(isNumeric(inputs));  */
+        /*36.
+        TreeNode[]nodes=new TreeNode[7];
+        for (int i =0;i<7;i++){
+            nodes[i]=new TreeNode(i+1);
+        }
+        nodes[0].left=nodes[1];nodes[0].right=nodes[2];
+        nodes[1].left=nodes[3];nodes[1].right=nodes[4];
+        nodes[2].left=nodes[5];nodes[2].right=nodes[6];
+        ArrayList<Integer> ret=PrintFromTopToBottom(nodes[0]);
+        for(int i :ret){
+            System.out.print(i+" ");
+        }*/
+        /*40.
+        TreeNode[]nodes=new TreeNode[5];
+        int nums[]={10,5,12,4,7};
+        for (int i =0;i<5;i++){
+            nodes[i]=new TreeNode(nums[i]);
+        }
+        nodes[0].left=nodes[1];nodes[0].right=nodes[2];
+        nodes[1].left=nodes[3];nodes[1].right=nodes[4];
+        int target=22;
+        Solution s=new Solution();
+        ArrayList<ArrayList<Integer>>ret=s.FindPath(nodes[0],target);
+        System.out.println("print:");
+        for(ArrayList<Integer> i : ret){
+            for(int j : i){
+                System.out.print(j+" ");
+            }
+            System.out.println();
+        } */
     }
 }
 
@@ -1166,6 +1303,32 @@ class Solution{
 //            字符串后移1字符，模式后移2字符，相当于x*算一次。
 //            符串后移1字符，模式不变，即继续匹配字符下一位，因为*可以匹配多位。
 */
+    /*40.
+    二叉树中和为某一值的路径
+    输入一颗二叉树和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。
+    private ArrayList<ArrayList<Integer>> ret = new ArrayList<>();
+    public ArrayList<ArrayList<Integer>> FindPath(javaCodes.TreeNode root, int target) {
+        backtracking(root, target, new ArrayList<>());
+        return ret;
+    }
+    private void backtracking(javaCodes.TreeNode node, int target, ArrayList<Integer> path) {
+        if (node == null)
+            return;
+        path.add(node.val);
+        target -= node.val;
+        if (target == 0 && node.left == null && node.right == null) {//找到一条路径
+            for(int i : path)
+                System.out.print(i+" ");
+            System.out.println();
+            ret.add(new ArrayList<>(path));//path受后面操作影响，因此要另辟一块空间保存path此时的值
+        } else {//在子树中找
+            backtracking(node.left, target, path);
+            backtracking(node.right, target, path);
+        }
+        path.remove(path.size() - 1);//递归结束后删掉本轮递归添加的元素
+    }
+     */
+
 
 
 }
