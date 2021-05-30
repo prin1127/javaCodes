@@ -561,8 +561,10 @@ public class javaCodes {
     public static boolean isNumeric(char[] str) {
         if (str == null || str.length == 0)
             return false;
-        return new String(str).matches("[+-]?\\d*(\\.\\d*)?([eE][+-]?\\d+)?");
+        return new String(str).matches("[+-]?\\d*(\\.\\d+)?([eE][+-]?\\d+)?");
     }
+//    其实这样是有问题的，即223.会输出false
+//    但改为"[+-]?\\d*(\\.\\d*)?([eE][+-]?\\d+)?"，那么223.e3，会输出true
     */
 
     /*24.
@@ -585,6 +587,11 @@ public class javaCodes {
     }
     */
 
+    /*25.
+    链表中倒数第k个节点
+    输入一个链表，输出该链表中倒数第k个结点。
+    设链表的长度为 N。设两个指针 P1 和 P2，先让 P1 移动 K 个节点，则还有 N - K 个节点可以移动。
+    此时让 P1 和 P2 同时移动，可以知道当 P1 移动到链表结尾时，P2 移动到 N - K 个节点处，该位置就是倒数第 K 个节点。
     public class ListNode {
         int val;
         ListNode next = null;
@@ -592,11 +599,6 @@ public class javaCodes {
             this.val = val;
         }
     }
-    /*25.
-    链表中倒数第k个节点
-    输入一个链表，输出该链表中倒数第k个结点。
-    设链表的长度为 N。设两个指针 P1 和 P2，先让 P1 移动 K 个节点，则还有 N - K 个节点可以移动。
-    此时让 P1 和 P2 同时移动，可以知道当 P1 移动到链表结尾时，P2 移动到 N - K 个节点处，该位置就是倒数第 K 个节点。
     public ListNode FindKthToTail(ListNode head, int k) {
         if (head == null)
             return null;
@@ -698,6 +700,215 @@ public class javaCodes {
         return head.next;
     }
      */
+
+    /*29.
+    树的子结构
+    输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）
+    第一步，在A中找到与B根节点值相同的节点；第二步判断以该节点为根节点的树是否包括B。
+    其中第一步需要遍历树A，找到与B根节点值相同的节点，这个查找过程就是一个递归过程。
+    第二步要判断以该节点为根节点的树是否包括B，这也是一个递归过程。
+    public class TreeNode {
+        int val = 0;
+        TreeNode left = null;
+        TreeNode right = null;
+        public TreeNode(int val) {
+            this.val = val;
+        }
+    }
+    public boolean HasSubtree(TreeNode root1, TreeNode root2) {
+        if (root1 == null || root2 == null)
+            return false;
+        return isSubtreeWithRoot(root1, root2) || HasSubtree(root1.left, root2) || HasSubtree(root1.right, root2);
+    }
+    private boolean isSubtreeWithRoot(TreeNode root1, TreeNode root2) {
+        if (root2 == null)//B结束，即在A中找到B子结构
+            return true;
+        if (root1 == null)//A结束
+            return false;
+        if (root1.val != root2.val)//根节点不相等
+            return false;
+        return isSubtreeWithRoot(root1.left, root2.left) && isSubtreeWithRoot(root1.right, root2.right);//继续向子树遍历
+    }
+    */
+
+    /*30.
+    二叉树的镜像
+    public void Mirror(TreeNode root) {
+        if (root == null)
+            return;
+        swap(root);
+        Mirror(root.left);
+        Mirror(root.right);
+    }
+    private void swap(TreeNode root) {
+        TreeNode t = root.left;
+        root.left = root.right;
+        root.right = t;
+    }
+     */
+    /*31.
+    对称的二叉树
+    请实现一个函数，用来判断一棵二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。
+    boolean isSymmetrical(TreeNode pRoot) {
+        if (pRoot == null)
+            return true;
+        return isSymmetrical(pRoot.left, pRoot.right);
+    }
+    boolean isSymmetrical(TreeNode t1, TreeNode t2) {
+        if (t1 == null && t2 == null)
+            return true;
+        if (t1 == null || t2 == null)
+            return false;
+        if (t1.val != t2.val)
+            return false;
+        return isSymmetrical(t1.left, t2.right) && isSymmetrical(t1.right, t2.left);
+    }
+     */
+    /*32.
+    顺时针打印矩阵
+    输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+    例如，如果输入如下4 X 4矩阵：
+      1  2  3  4
+      5  6  7  8
+      9 10 11 12
+     13 14 15 16
+    则依次打印出数字1,2,3,4,8,12,16,15,14,13,9,5,6,7,11,10.
+//    简单来说，就是不断地收缩矩阵的边界
+//    定义四个变量代表范围，up、down、left、right
+//    向右走存入整行的值，当存入后，该行再也不会被遍历，代表上边界的 up 加一，同时判断是否和代表下边界的 down 交错
+//    向下走存入整列的值，当存入后，该列再也不会被遍历，代表右边界的 right 减一，同时判断是否和代表左边界的 left 交错
+//    向左走存入整行的值，当存入后，该行再也不会被遍历，代表下边界的 down 减一，同时判断是否和代表上边界的 up 交错
+//    向上走存入整列的值，当存入后，该列再也不会被遍历，代表左边界的 left 加一，同时判断是否和代表右边界的 right 交错
+    public ArrayList<Integer> printMatrix(int [][] matrix) {
+        ArrayList<Integer> list = new ArrayList<>();
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0){
+            return list;
+        }
+        int up = 0;
+        int down = matrix.length-1;
+        int left = 0;
+        int right = matrix[0].length-1;
+        while(true){
+            for(int col=left;col<=right;col++){// 最上面一行
+                list.add(matrix[up][col]);
+            }
+            up++;// 向下逼近
+            if(up > down) {// 判断是否越界
+                break;
+            }
+            for(int row=up;row<=down;row++){// 最右边一列
+                list.add(matrix[row][right]);
+            }
+            right--;// 向左逼近
+            if(left > right){// 判断是否越界
+                break;
+            }
+            for(int col=right;col>=left;col--){// 最下面一行
+                list.add(matrix[down][col]);
+            }
+            down--;// 向上逼近
+            if(up > down){// 判断是否越界
+                break;
+            }
+            for(int row=down;row>=up;row--){// 最左边一列
+                list.add(matrix[row][left]);
+            }
+            left++;// 向右逼近
+            if(left > right){// 判断是否越界
+                break;
+            }
+        }
+        return list;
+    }
+     */
+
+    /*33.
+    包含min函数的栈
+    定义栈的数据结构，请在该类型中实现一个能够得到栈最小元素的 min 函数（要求时间复杂度为O(1)）。
+    private Stack<Integer> dataStack = new Stack<>();
+    private Stack<Integer> minStack = new Stack<>();
+    public void push(int node) {
+        dataStack.push(node);
+        minStack.push(minStack.isEmpty() ? node : Math.min(minStack.peek(), node));
+    }
+    public void pop() {
+        dataStack.pop();
+        minStack.pop();
+    }
+    public int top() {
+        return dataStack.peek();
+    }
+    public int min() {
+        return minStack.peek();
+    }
+     */
+
+    /*34.
+    栈的压入、弹出序列
+    输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否可能为该栈的弹出顺序。
+    假设压入栈的所有数字均不相等。例如序列1,2,3,4,5是某栈的压入顺序，序列4,5,3,2,1是该压栈序列对应的一个弹出序列，
+    但4,3,5,1,2就不可能是该压栈序列的弹出序列。（注意：这两个序列的长度是相等的）
+    新建一个栈，将数组A压入栈中，当栈顶元素等于数组B时，就将其出栈。当循环结束时，判断栈是否为空，若为空则返回true。
+    public boolean IsPopOrder(int[] pushSequence, int[] popSequence) {
+        if(pushSequence.length==0 || popSequence.length==0 || popSequence.length!=pushSequence.length)
+            return false;
+        int n = pushSequence.length;
+        Stack<Integer> stack = new Stack<>();
+        for (int pushIndex = 0, popIndex = 0; pushIndex < n; pushIndex++) {
+            stack.push(pushSequence[pushIndex]);
+            while (popIndex < n && !stack.isEmpty() && stack.peek() == popSequence[popIndex]) {
+                stack.pop();
+                popIndex++;
+            }
+        }
+        return stack.isEmpty();
+    }
+    */
+
+    /*35.
+    输入一个字符串,按字典序打印出该字符串中字符的所有排列。
+    例如输入字符串abc,则按字典序打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。
+    输入字符串长度不超过9(可能有字符重复),字符只包括大小写字母。
+    回溯法
+    java中String是只读的，没有办法进行变换，因此需要使用StringBuilder。
+    TreeSet可避免重复
+    private ArrayList<String> res = new ArrayList<>();
+    private TreeSet<String> treeSet = new TreeSet<>();
+    private StringBuilder stringBuilder = new StringBuilder();
+    private boolean[] visited;
+
+    public ArrayList<String> Permutation(String str) {
+        if (str == null || str.equals("")) {
+            return res;
+        }
+        char[] strs = str.toCharArray();
+        Arrays.sort(strs);//排序
+        visited = new boolean[strs.length];
+        combination(strs, 0);
+        res.addAll(treeSet);//将TreeSet赋给ArrayList
+        return res;
+    }
+
+    private void combination(char[] strs, int len) {
+        if (len == strs.length) {
+            treeSet.add(stringBuilder.toString());//结果加到TreeSet
+//            其实不使用TreeSet，也可避免重复。只需在向排列集合中增加新排列时，判断其是否已经在集合里。
+//            if(!res.contains(stringBuilder.toString()))
+//                res.add(stringBuilder.toString());
+            return;//回溯
+        }
+        for (int i = 0; i < strs.length; i++) {
+            if (!visited[i]) {
+                visited[i] = true;
+                stringBuilder.append(strs[i]);
+                combination(strs, len + 1);
+                //Duang ~ 回溯 - 状态重置
+                visited[i] = false;
+                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            }
+        }
+    }
+    */
 
 
     public static void main(String[] args) {
