@@ -1016,6 +1016,105 @@ public class javaCodes {
         return verify(sequence, first, cutIndex - 1) && verify(sequence, cutIndex, last - 1);//分别对左右子树递归判断
     }
     */
+    /*41.
+    复杂链表的复制
+    输入一个复杂链表（每个节点中有节点值，以及两个指针，一个指向下一个节点，另一个特殊指针指向任意一个节点），返回结果为复制后复杂链表的 head。
+    public class RandomListNode {
+        int label;
+        RandomListNode next = null;
+        RandomListNode random = null;
+        RandomListNode(int label) {
+            this.label = label;
+        }
+    }
+    public RandomListNode Clone(RandomListNode pHead) {
+        if (pHead == null)
+            return null;
+        // 插入新节点
+        RandomListNode cur = pHead;
+        while (cur != null) {
+            RandomListNode clone = new RandomListNode(cur.label);
+            clone.next = cur.next;
+            cur.next = clone;
+            cur = clone.next;//cur.next.next
+        }
+        // 建立 random 链接
+        cur = pHead;
+        while (cur != null) {
+            RandomListNode clone = cur.next;
+            if (cur.random != null)
+                clone.random = cur.random.next;
+            cur = clone.next;//cur.next.next
+        }
+        // 拆分
+        cur = pHead;
+        RandomListNode pCloneHead = pHead.next;
+        while (cur.next != null) {//依次改变next链接
+            RandomListNode tmp = cur.next;
+            cur.next = tmp.next;
+            cur = tmp;
+        }
+        return pCloneHead;
+    }
+     */
+    /*42.
+    二叉搜索树与双向链表
+    输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调整树中结点指针的指向。
+    （一）中序遍历二叉树，用一个ArrayList类保存遍历的结果，然后再来修改指针
+    public TreeNode Convert(TreeNode pRootOfTree) {
+        if(pRootOfTree == null){
+            return null;
+        }
+        ArrayList<TreeNode> list = new ArrayList<>();
+        Convert(pRootOfTree, list);
+        return Convert(list);
+
+    }
+    //中序遍历，在list中按遍历顺序保存
+    public void Convert(TreeNode pRootOfTree, ArrayList<TreeNode> list){
+        if(pRootOfTree.left != null){
+            Convert(pRootOfTree.left, list);
+        }
+
+        list.add(pRootOfTree);
+
+        if(pRootOfTree.right != null){
+            Convert(pRootOfTree.right, list);
+        }
+    }
+    //遍历list，修改指针
+    public TreeNode Convert(ArrayList<TreeNode> list){
+        for(int i = 0; i < list.size() - 1; i++){
+            list.get(i).right = list.get(i + 1);
+            list.get(i + 1).left = list.get(i);
+        }
+        return list.get(0);
+    }
+    （二）分治：
+    private TreeNode pLast = null;//记录当前链表的末尾节点
+    public TreeNode Convert(TreeNode root) {
+        if (root == null)
+            return null;
+        // 先令左子树形成链表
+        // 如果左子树为空，那么根节点root为双向链表的头节点
+        TreeNode head = Convert(root.left);
+        if (head == null)
+            head = root;
+        // 连接当前节点root和当前链表的尾节点pLast
+        root.left = pLast;
+        if (pLast != null)
+            pLast.right = root;
+        pLast = root;
+        //再把右子树也加到链表里
+        Convert(root.right);
+        return head;
+    }
+     */
+
+
+
+
+
 
 
     public static void main(String[] args) {
@@ -1118,6 +1217,18 @@ public class javaCodes {
             }
             System.out.println();
         } */
+        /*43.
+        TreeNode[]nodes=new TreeNode[5];
+        int nums[]={10,5,12,4,7};
+        for (int i =0;i<5;i++){
+            nodes[i]=new TreeNode(nums[i]);
+        }
+        nodes[0].left=nodes[1];nodes[0].right=nodes[2];
+        nodes[1].left=nodes[3];nodes[1].right=nodes[4];
+        Solution s=new Solution();
+        String str=s.Serialize(nodes[0]);
+        //10,5,4,#,#,7,#,#,12,#,#
+        System.out.println(str);*/
     }
 }
 
@@ -1328,8 +1439,58 @@ class Solution{
         path.remove(path.size() - 1);//递归结束后删掉本轮递归添加的元素
     }
      */
-
-
+    /*43.
+    序列化二叉树
+    请实现两个函数，分别用来序列化和反序列化二叉树
+    二叉树的序列化是指：把一棵二叉树按照某种遍历方式的结果以某种格式保存为字符串，从而使得内存中建立起来的二叉树可以持久保存。
+    序列化可以基于先序、中序、后序、层序的二叉树遍历方式来进行修改，序列化的结果是一个字符串，序列化时通过某种符号表示空节点（#），
+    以 ！ 表示一个结点值的结束（value!）。
+    二叉树的反序列化是指：根据某种遍历顺序得到的序列化字符串结果str，重构二叉树。
+    private String deserializeStr;
+    public String Serialize(javaCodes.TreeNode root) {//先序
+        if (root == null)
+            return "#";
+        return root.val + "," + Serialize(root.left) + "," + Serialize(root.right);
+    }//递归
+    public javaCodes.TreeNode Deserialize(String str) {
+        deserializeStr = str;
+        return Deserialize();
+    }
+    private javaCodes.TreeNode Deserialize() {
+        if (deserializeStr.length() == 0)
+            return null;
+        int index = deserializeStr.indexOf(",");//先序取根节点
+        String node = index == -1 ? deserializeStr : deserializeStr.substring(0, index);
+        deserializeStr = index == -1 ? "" : deserializeStr.substring(index + 1);//修改deserializeStr以便后续遍历
+        if (node.equals("#"))//返回
+            return null;
+        int val = Integer.valueOf(node);
+        javaCodes.TreeNode t = new javaCodes.TreeNode(val);
+        t.left = Deserialize();//左右子树分别根据deserializeStr去递归调用
+        t.right = Deserialize();
+        return t;
+    }
+    //另一种稍好理解的写法：
+    //使用index来设置树节点的val值，递归遍历左节点和右节点，如果值是#则表示是空节点，返回
+    int index=-1;
+    javaCodes.TreeNode Deserialize(String str) {
+        String[] s = str.split(",");//将序列化之后的序列用，分隔符转化为数组
+        index++;
+        int len = s.length;
+        if (index > len) {
+            return null;
+        }
+        javaCodes.TreeNode treeNode = null;
+        if(s[index].equals("#"))
+            return null;
+        else{//不是叶子节点，递归
+            treeNode = new javaCodes.TreeNode(Integer.parseInt(s[index]));
+            treeNode.left = Deserialize(str);
+            treeNode.right = Deserialize(str);
+        }
+        return treeNode;
+    }
+    */
 
 }
 
