@@ -1111,6 +1111,255 @@ public class javaCodes {
     }
      */
 
+    /*44.
+    数组中出现次数超过一半的数字
+    数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。（假设符合条件的数字一定存在）
+    多数投票问题，可以利用 Boyer-Moore Majority Vote Algorithm 来解决这个问题，使得时间复杂度为 O(N)。
+    使用 cnt 来统计一个元素出现的次数，当遍历到的元素和统计元素相等时，令 cnt++，否则令 cnt--。
+    如果前面查找了 i个元素，且 cnt == 0，说明前 i 个元素没有 majority，或者有 majority，但是出现的次数少于 i / 2 ，
+    因为如果多于 i / 2的话 cnt 就一定不会为 0 。因为+1的次数会比-1的次数多。
+    此时剩下的 n - i 个元素中，majority 的数目依然多于 (n - i) / 2，因此继续查找就能找出majority。
+    //[1,2,3,2,2,2,5,4,2]  2
+    public int MoreThanHalfNum_Solution(int[] nums) {
+        int majority = 0;
+        int count = 0;
+        for (int i : nums) {
+            if (count == 0) {
+                majority = i;
+                count++;
+            } else if (i == majority) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+        return majority;
+    }
+     */
+    /*45.
+    最小的 K 个数
+    给定一个数组，找出其中最小的K个数。
+    快速选择：
+    复杂度：O(N) + O(1)
+    只有当允许修改数组元素时才可以使用
+    public ArrayList<Integer> GetLeastNumbers_Solution(int[] nums, int k) {
+        ArrayList<Integer> ret = new ArrayList<>();
+        if (k > nums.length || k <= 0)
+            return ret;
+        findKthSmallest(nums, k - 1);
+        for (int i = 0; i < k; i++)
+            ret.add(nums[i]);
+        return ret;
+    }
+    public void findKthSmallest(int[] nums, int k) {
+        int l = 0, h = nums.length - 1;
+        while (l < h) {
+            int j = partition(nums, l, h);
+            if (j == k)
+                break;
+            if (j > k)
+                h = j - 1;
+            else
+                l = j + 1;
+        }
+    }
+    //快排
+    // 返回一个整数 j 使得 a[l..j-1] 小于等于 a[j]，且 a[j+1..h] 大于等于 a[j]，此时 a[j] 就是数组的第 j 大元素。
+    private int partition(int[] nums, int l, int h) {
+        int p = nums[l]; // 切分元素
+        int i = l, j = h + 1;
+        while (true) {
+        while (i != h && nums[++i] < p) ;
+        while (j != l && nums[--j] > p) ;
+        if (i >= j)
+            break;
+        swap(nums, i, j);
+        }
+        swap(nums, l, j);
+        return j;
+    }
+    private void swap(int[] nums, int i, int j) {
+        int t = nums[i];
+        nums[i] = nums[j];
+        nums[j] = t;
+    }
+    大小为 K 的最小堆
+    复杂度：O(NlogK) + O(K)
+    特别适合处理海量数据
+    大顶堆：每个结点的值都大于或等于其左右孩子结点的值
+    小顶堆：每个结点的值都小于或等于其左右孩子结点的值
+    应该使用大顶堆来维护最小堆，而不能直接创建一个小顶堆并设置一个大小，企图让小顶堆中的元素都是最小元素。
+    （因为大顶堆只需要与堆顶比较，小顶堆需要跟“叶子”比较）
+    维护一个大小为 K 的最小堆过程如下：在添加一个元素之后，如果大顶堆的大小大于 K，那么需要将大顶堆的堆顶元素去除。
+    public ArrayList<Integer> GetLeastNumbers_Solution(int[] nums, int k) {
+        if (k > nums.length || k <= 0)
+            return new ArrayList<>();
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((o1, o2) -> o2 - o1);//指定为大顶堆
+        for (int num : nums) {
+            maxHeap.add(num);
+            if (maxHeap.size() > k)
+                maxHeap.poll();
+        }
+        return new ArrayList<>(maxHeap);
+    }
+     */
+
+    /*46.
+    数据流中的中位数
+    如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。
+    如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+    //大顶堆，存储左半边元素
+    private PriorityQueue<Integer> left = new PriorityQueue<>((o1, o2) -> o2 - o1);
+    // 小顶堆，存储右半边元素，并且右半边元素都大于左半边
+    private PriorityQueue<Integer> right = new PriorityQueue<>();
+    // 当前数据流读入的元素个数
+    private int N = 0;
+    public void Insert(Integer val) {
+        // 插入要保证两个堆存于平衡状态
+        if (N % 2 == 0) {
+//            N 为偶数的情况下插入到右半边。
+//            因为右半边元素都要大于左半边，但是新插入的元素不一定比左半边元素来的大，
+//            因此需要先将元素插入左半边，然后利用左半边为大顶堆的特点，取出堆顶元素即为最大元素，此时插入右半边
+            left.add(val);
+            right.add(left.poll());//大顶堆取最大
+        } else {
+            //同理，N 为奇数的情况下插入到左半边。
+            right.add(val);
+            left.add(right.poll());//小顶堆取最小
+        }
+        N++;
+    }
+    public Double GetMedian() {
+        if (N % 2 == 0)
+            return (left.peek() + right.peek()) / 2.0;
+        else
+            return (double) right.peek();
+    }
+     */
+    /*47.
+    字符流中第一个不重复的字符
+    请实现一个函数用来找出字符流中第一个只出现一次的字符。
+    例如，当从字符流中只读出前两个字符 "go" 时，第一个只出现一次的字符是 "g"。
+    当从该字符流中读出前六个字符“google" 时，第一个只出现一次的字符是 "l"。
+    不重复：hash
+    第一个：先进先出->queue
+    //（一）
+    private int[] charCnt = new int[128];//ASCII码数量为128
+    private Queue<Character> queue = new LinkedList<Character>();
+    public void Insert(char ch) {
+        //System.out.println(ch+":"+charCnt[ch]);
+        if (charCnt[ch]++ == 0)  //新的不重复的字符，入队;出现过的重复字符只charCnt++，不入队
+            queue.add(ch);
+        //System.out.println(ch+"---:"+charCnt[ch]);
+    }
+    public char FirstAppearingOnce() {
+        Character CHAR = null;
+        char c = 0;
+        while ((CHAR = queue.peek()) != null) {//访问队头元素
+            c = CHAR.charValue();
+            if (charCnt[c] == 1) //未重复则输出
+                return c;
+            else queue.remove(); //重复则移出队列
+        }
+        return '#'; //队空，返回#
+    }
+    //（二）
+    private int[] cnts = new int[128];
+    private Queue<Character> queue = new LinkedList<>();
+    public void Insert(char ch) {
+        cnts[ch]++;
+        queue.add(ch);
+        while (!queue.isEmpty() && cnts[queue.peek()] > 1)
+            queue.poll();
+    }
+    public char FirstAppearingOnce() {
+        return queue.isEmpty() ? '#' : queue.peek();
+    }
+     */
+
+    /*48.
+    连续子数组的最大和
+    输入一个整型数组，数组里有正数也有负数。数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。要求时间复杂度为 O(n).
+    输入的数组为{1,-2,3,10,—4,7,2,一5}，和最大的子数组为{3,10,一4,7,2}，因此输出为该子数组的和 18。
+    public int FindGreatestSumOfSubArray(int[] nums) {
+        if (nums == null || nums.length == 0)
+            return 0;
+        int greatestSum = Integer.MIN_VALUE;
+        int sum = 0;
+        for (int val : nums) {
+            sum = sum <= 0 ? val : sum + val;//当和一旦为负数，则舍弃该组数字
+            greatestSum = Math.max(greatestSum, sum);//保证greatestSum始终为最大和
+        }
+        return greatestSum;
+    }
+     */
+    /*49.
+    整数中 1 出现的次数（从 1 到 n ）
+    输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。例如，1~13中包含1的数字有1、10、11、12、13因此共出现6次。
+    参考：https://leetcode-cn.com/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/solution/mian-shi-ti-43-1n-zheng-shu-zhong-1-chu-xian-de-2/
+    public int NumberOf1Between1AndN_Solution(int n) {
+        int digit = 1, res = 0;
+        int high = n / 10, cur = n % 10, low = 0;
+        while(high != 0 || cur != 0) {
+            if (cur == 0) res += high * digit;
+            else if (cur == 1) res += high * digit + low + 1;
+            else res += (high + 1) * digit;
+            low += cur * digit;
+            cur = high % 10;
+            high /= 10;
+            digit *= 10;
+        }
+            return res;
+    }
+    */
+
+    /*50.
+    数字序列中某一位数字
+    数字以 0123456789101112131415... 的格式序列化到一个字符串中，求这个字符串的第 index 位。
+//    　　观察规律：
+//            　　个位数的个数一共有10个，即0~9，共占了10*1位数字；
+//            　　两位数的个数一共有90个，即10~99，每个数字占两位，共占了90*2位数字；
+//            　　……
+//            　　m位数的个数一共有9*10^(m-1)个，每个数字占m位，占了9*10^(m-1)*m位数字。
+    public int digitAtIndex(int index) {
+        if(index<0)
+            return -1;
+        int m=1;  //m位数
+        while(true) {
+            int numbers=numbersOfIntegers(m);  //m位数的个数
+            if(index<numbers*m)
+                return getDigit(index,m);
+            index-=numbers*m;//***
+            m++;
+        }
+    }
+    //返回m位数的总个数
+    //例如，两位数一共有90个：10~99；三位数有900个：100~999
+    private int numbersOfIntegers(int m) {
+        if(m==1)
+            return 10;
+        return (int) (9*Math.pow(10, m-1));
+    }
+    //获取数字
+    private int getDigit(int index, int m) {
+        System.out.println("index:"+index);
+        System.out.println("m:"+m);
+        int number=getFirstNumber(m)+index/m;  //对应的m位数
+        System.out.println("number:"+number);
+        int indexFromRight = m-index%m;  //在数字中的位置
+        System.out.println("indexFromRight:"+indexFromRight);
+        for(int i=1;i<indexFromRight;i++)
+            number/=10;
+        return number%10;
+    }
+    //第一个m位数
+    //例如第一个两位数是10，第一个三位数是100
+    private int getFirstNumber(int m) {
+        if(m==1)
+            return 0;
+        return (int) Math.pow(10, m-1);
+    }
+     */
 
 
 
@@ -1229,6 +1478,18 @@ public class javaCodes {
         String str=s.Serialize(nodes[0]);
         //10,5,4,#,#,7,#,#,12,#,#
         System.out.println(str);*/
+        /*47.
+        Solution s=new Solution();
+        Scanner in=new Scanner(System.in);
+        String input=in.next();
+        char[] inputs=input.toCharArray();
+        String caseout="";
+        for(char ch : inputs){
+            s.Insert(ch);
+            caseout = caseout+"-"+s.FirstAppearingOnce();
+        }
+        System.out.println(caseout);
+         */
     }
 }
 
