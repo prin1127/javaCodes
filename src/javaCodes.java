@@ -1770,6 +1770,227 @@ public class javaCodes {
         c[j] = t;
     }
      */
+    /*67.
+    左旋转字符串
+    Input:
+        S="abcXYZdef"
+        K=3
+    Output:
+    "XYZdefabc"
+    先将 "abc" 和 "XYZdef" 分别翻转，得到 "cbafedZYX"，然后再把整个字符串翻转得到 "XYZdefabc"。
+    public String LeftRotateString(String str, int n) {
+        if (n >= str.length())
+            return str;
+        char[] chars = str.toCharArray();
+        reverse(chars, 0, n - 1);
+        reverse(chars, n, chars.length - 1);
+        reverse(chars, 0, chars.length - 1);
+        return new String(chars);
+    }
+    private void reverse(char[] chars, int i, int j) {
+        while (i < j)
+            swap(chars, i++, j--);
+    }
+    private void swap(char[] chars, int i, int j) {
+        char t = chars[i];
+        chars[i] = chars[j];
+        chars[j] = t;
+    }
+    */
+    /*68.
+    滑动窗口的最大值
+    给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。
+    例如，如果输入数组 {2, 3, 4, 2, 6, 2, 5, 1} 及滑动窗口的大小 3，那么一共存在 6 个滑动窗口，他们的最大值分别为 {4,4, 6, 6, 6, 5}。
+    public ArrayList<Integer> maxInWindows(int[] num, int size) {
+        ArrayList<Integer> ret = new ArrayList<>();
+        if (size > num.length || size < 1)
+            return ret;
+        PriorityQueue<Integer> heap = new PriorityQueue<>((o1, o2) -> o2 - o1); // 大顶堆
+        for (int i = 0; i < size; i++)
+            heap.add(num[i]);
+        ret.add(heap.peek());//访问堆头
+        for (int i = 0, j = i + size; j < num.length; i++, j++) { // 维护一个大小为 size 的大顶堆
+            heap.remove(num[i]);//移除相应元素
+            heap.add(num[j]);
+            ret.add(heap.peek());
+        }
+        return ret;
+    }
+     */
+    /*69.
+    n 个骰子的点数
+    把 n 个骰子仍在地上，求点数和为 s 的概率。
+    动态规划解法：使用一个二维数组 dp 存储点数出现的次数，其中 dp[i][j] 表示前 i 个骰子产生点数 j 的次数。空间复杂度：O(N^2)
+    dp[i][j]=dp[i-1][j-1]+dp[i-1][j-2]+...+dp[i-1][j-6]（0<j<=6i）
+    dp[i][j]=0 (j>6i或者j<i)
+    public List<Map.Entry<Integer, Double>> dicesSum(int n) {
+        final int face = 6;
+        final int pointNum = face * n;
+        long[][] dp = new long[n + 1][pointNum + 1];
+        for (int i = 1; i <= face; i++)
+            dp[1][i] = 1;//1个骰子，出现点数1-6的次数均为 1
+        for (int i = 2; i <= n; i++)
+            for (int j = i; j <= pointNum; j++) // 使用 i 个骰子最小点数为 i
+                for (int k = 1; k <= face; k++) {
+                    //System.out.println("j:"+j+",k:"+k+",j-k="+(j-k));
+                    if(j>k)
+                        dp[i][j] += dp[i - 1][j - k];
+                }
+        final double totalNum = Math.pow(6, n);//n个骰子每个都有6种可能，则总共6的n方种可能
+        List<Map.Entry<Integer, Double>> ret = new ArrayList<>();
+        for (int i = n; i <= pointNum; i++)// 使用 n 个骰子最小点数为 n
+            ret.add(new AbstractMap.SimpleEntry<>(i, dp[n][i] / totalNum));
+        return ret;
+    }
+     */
+    /*70.
+    扑克牌顺子
+    五张牌，其中大小鬼为癞子，牌面大小为 0（可抵任意牌）。判断这五张牌是否能组成顺子(连续牌)。
+    public boolean isContinuous(int[] nums) {
+        if (nums.length < 5)
+            return false;
+        Arrays.sort(nums);
+        // 统计癞子数量
+        int cnt = 0;
+        for (int num : nums)
+            if (num == 0)
+                cnt++;
+        // 使用癞子去补全不连续的顺子
+        for (int i = cnt; i < nums.length - 1; i++) {
+            if (nums[i + 1] == nums[i])//有相同的则一定不会组成顺子
+                return false;
+            cnt -= nums[i + 1] - nums[i] - 1;//相邻牌不占用癞子
+        }
+        System.out.println(cnt);
+        return cnt >= 0;//癞子够补全则>=0
+    }
+     */
+    /*71.
+    圆圈中最后剩下的数
+    让n个小朋友们围成一个大圈。然后，随机指定一个数 m，让编号为 0 的小朋友开始报数。每次喊到 m-1 的那个小朋友要出列唱首歌，
+    然后可以在礼品箱中任意的挑选礼物，并且不再回到圈中，从他的下一个小朋友开始，继续 0...m-1报数 .... 这样下去 ....
+    直到剩下最后一个小朋友，可以不用表演。
+    令f[i]表示i个人时最后胜利者的编号，则有递推公式：
+        f[1]=0;
+        f[i]=(f[i-1]+m)%i; (i>1)
+    约瑟夫环，圆圈长度为 n 的解可以看成长度为 n-1 的解再加上报数的长度 m。因为是圆圈，所以最后需要对 n 取余。
+    public int LastRemaining_Solution(int n, int m) {
+        if (n <= 0||m<=0)
+            return -1;
+        if (n == 1)
+            return 0;
+        return (LastRemaining_Solution(n - 1, m) + m) % n;
+    }
+     */
+    /*72.
+    求 1+2+3+...+n
+    要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句 A ? B : C。
+    public int Sum_Solution(int n) {
+        int sum = n;
+        boolean b = (n > 0) && ((sum += Sum_Solution(n - 1)) > 0);
+        return sum;
+    }
+//    使用递归解法最重要的是指定返回条件，但是本题无法直接使用 if 语句来指定返回条件。
+//    条件与 && 具有短路原则，即在第一个条件语句为 false 的情况下不会去执行第二个条件语句。
+//    利用这一特性，将递归的返回条件取非然后作为 && 的第一个条件语句，递归的主体转换为第二个条件语句，
+//    那么当递归的返回条件为true 的情况下就不会执行递归的主体部分，递归返回。
+//    本题的递归返回条件为 n <= 0，取非后就是 n > 0；递归的主体部分为 sum += Sum_Solution(n - 1)，
+//    转换为条件语句后就是 (sum += Sum_Solution(n - 1)) > 0。
+    */
+    /*73.
+    不用加减乘除做加法
+    写一个函数，求两个整数之和，要求不得使用 +、-、*、/ 四则运算符号
+    a ^ b 表示没有考虑进位的情况下两数的和，(a & b) << 1 就是进位。
+    递归会终止的原因是 (a & b) << 1 最右边会多一个 0，那么继续递归，进位最右边的 0 会慢慢增多，最后进位会变为0，递归终止。
+    public int Add(int a, int b) {
+        return b == 0 ? a : Add(a ^ b, (a & b) << 1);
+    }
+     */
+    /*74.
+    构建乘积数组
+    给定一个数组 A[0, 1,..., n-1]，请构建一个数组 B[0, 1,..., n-1]，
+    其中 B 中的元素 B[i]=A[0]*A[1]*...*A[i-1]*A[i+1]*...*A[n-1]。要求不能使用除法。
+    public int[] multiply(int[] A) {
+        if(A==null || A.length<2)
+            return null;
+        int[] B=new int[A.length];
+        B[0]=1;
+        for(int i=1;i<A.length;i++)//从左往右
+            B[i]=B[i-1]*A[i-1];//left[i]=left[i-1]*A[i-1]
+        //循环结束，B数组中暂时存放了自己对应左下三角的乘积
+        int temp=1;
+        for(int i=A.length-2;i>=0;i--){//从右往左
+            temp*=A[i+1];//right[i]=right[i+1]*A[i+1]
+            B[i]*=temp;//left[i]*right[i]
+        }
+        return B;
+    }
+     */
+    /*75.
+    把字符串转换成整数
+    将一个字符串转换成一个整数，字符串不是一个合法的数值则返回 0，要求不能使用字符串转换整数的库函数。
+    public int StrToInt(String str) {
+        if (str == null || str.length() == 0)
+            return 0;
+        boolean isNegative = str.charAt(0) == '-';
+        int ret = 0;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (i == 0 && (c == '+' || c == '-')) // 符号判定
+                continue;
+            if (c < '0' || c > '9') // 非法输入
+                return 0;
+            ret = ret * 10 + (c - '0');
+        }
+        return isNegative ? -ret : ret;
+    }
+     */
+    /*76.
+    树中两个节点的最低公共祖先
+    二叉查找树中，两个节点 p, q 的最低公共祖先 root 满足 root.val >= p.val && root.val <= q.val
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null)
+            return null;
+        if (root.val > p.val && root.val > q.val)
+            return lowestCommonAncestor(root.left, p, q);
+        if (root.val < p.val && root.val < q.val)
+            return lowestCommonAncestor(root.right, p, q);
+        return root;
+    }
+    普通二叉树：在左右子树中查找是否存在 p 或者 q，如果 p 和 q 分别在两个子树中，那么就说明根节点就是最低公共祖先。
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q)
+            return root;
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        //return left == null ? right : right == null ? left : root;
+        if(left == null)
+            return right;
+        else
+            if(right == null)
+                return left;
+            else
+                return root;
+    }
+    写法二（配套图解）：
+    时间复杂度：O(N)，其中 N 是二叉树的节点数。二叉树的所有节点有且只会被访问一次，因此时间复杂度为 O(N)。
+    空间复杂度：O(N) ，其中 N 是二叉树的节点数。递归调用的栈深度取决于二叉树的高度，
+              二叉树最坏情况下为一条链，此时高度为 N，因此空间复杂度为 O(N)。
+    private TreeNode ans;
+    private boolean dfs(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return false;
+        boolean lson = dfs(root.left, p, q);
+        boolean rson = dfs(root.right, p, q);
+        if ((lson && rson) || ((root.val == p.val || root.val == q.val) && (lson || rson))) {
+            ans = root;
+        }
+        return lson || rson || (root.val == p.val || root.val == q.val);
+    }
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        this.dfs(root, p, q);
+        return this.ans;
+    }
+    */
 
 
 
@@ -1781,7 +2002,18 @@ public class javaCodes {
 
 
 
-    public static void main(String[] args) {
+
+
+
+
+
+
+
+
+
+
+
+        public static void main(String[] args) {
         /*1.
         int nums[]={2, 3, 1, 0, 2, 5};
         int duplication=duplicate(nums,6);
@@ -1914,6 +2146,21 @@ public class javaCodes {
         String s="student. a am I";
         javaCodes j=new javaCodes();
         System.out.println(j.ReverseSentence(s));*/
+        /*69.
+        javaCodes j=new javaCodes();
+        j.dicesSum(2); */
+        /*70.
+        int[]nums={1,2,4,3,5,0};
+        javaCodes j=new javaCodes();
+        System.out.println(j.isContinuous(nums)); */
+        /*74.
+        int[]nums={1,2,4,3,5};
+        javaCodes j=new javaCodes();
+        j.multiply(nums); */
+        /*75.
+        String str="-23";
+        javaCodes j=new javaCodes();
+        System.out.println(j.StrToInt(str)); */
 
     }
 }
