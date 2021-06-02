@@ -1672,6 +1672,104 @@ public class javaCodes {
         }
     }
     */
+    /*64.
+    和为 S 的两个数字
+    输入一个递增排序的数组和一个数字 S，在数组中查找两个数，使得他们的和正好是 S。如果有多对数字的和等于S，输出两个数的乘积最小的。
+    最外层的乘积最小!!!!!
+    使用双指针，一个指针指向元素较小的值，一个指针指向元素较大的值。指向较小元素的指针从头向尾遍历，指向较大元素的指针从尾向头遍历。
+    如果两个指针指向元素的和 sum == target，那么得到要求的结果；
+        如果 sum > target，移动较大的元素，使 sum 变小一些；
+        如果 sum < target，移动较小的元素，使 sum 变大一些
+    public ArrayList<Integer> FindNumbersWithSum(int[] array, int sum) {
+        int i = 0, j = array.length - 1;
+        while (i < j) {
+            int cur = array[i] + array[j];
+            if (cur == sum)
+                return new ArrayList<>(Arrays.asList(array[i], array[j]));
+            if (cur < sum)
+                i++;
+            else
+                j--;
+        }
+        return new ArrayList<>();
+    }
+    */
+    /*65.
+    和为 S 的连续正数序列
+    例如S=100:
+        [9, 10, 11, 12, 13, 14, 15, 16]
+        [18, 19, 20, 21, 22]
+    public ArrayList<ArrayList<Integer>> FindContinuousSequence(int sum) {
+        ArrayList<ArrayList<Integer>> ret = new ArrayList<>();
+        int start = 1, end = 2;
+        int curSum = 3;
+        while (end < sum) {
+            if (curSum > sum) {
+                curSum -= start;//从头开始往下去，保持序列的连续性
+                start++;
+            } else if (curSum < sum) {
+                end++;
+                curSum += end;
+            } else {//保存结果并调整curSum继续寻找
+                ArrayList<Integer> list = new ArrayList<>();
+                for (int i = start; i <= end; i++)
+                    list.add(i);
+                ret.add(list);
+                curSum -= start;
+                start++;
+                end++;
+                curSum += end;
+            }
+        }
+        return ret;
+    }
+     */
+    /*66.
+    翻转单词顺序列
+    Input:"student. a am I"
+    Output:"I am a student."
+    public static String ReverseSentence(String str) {
+        String[]chars=str.split(" ");
+        String []rets=new String[chars.length];
+        for (int i=0,j=chars.length-1;i<chars.length;i++,j--){
+            rets[i]=chars[j];
+        }
+        String rr="";
+        for (int i=0;i<chars.length-1;i++){
+            rr+=rets[i]+" ";
+        }
+        rr+=rets[chars.length-1];
+        return rr;
+    }
+    限制在O(n)即一个字符数组的空间复杂度：
+    public String ReverseSentence(String str) {
+        int n = str.length();
+        char[] chars = str.toCharArray();//按字符分割
+        int i = 0, j = 0;
+        while (j <= n) {
+            if (j == n || chars[j] == ' ') {//翻转单词
+                reverse(chars, i, j - 1);
+                i = j + 1;
+            }
+            j++;
+        }
+//        for(char c:chars)
+//            System.out.print(c);
+//        System.out.println();
+        reverse(chars, 0, n - 1);//翻转整个字符串
+        //翻转两词，保持字母正序（先倒序再正序）
+        return new String(chars);
+    }
+    private void reverse(char[] c, int i, int j) {
+        while (i < j)
+            swap(c, i++, j--);
+    }
+    private void swap(char[] c, int i, int j) {
+        char t = c[i];
+        c[i] = c[j];
+        c[j] = t;
+    }
+     */
 
 
 
@@ -1812,6 +1910,10 @@ public class javaCodes {
         int[] num2={0};
         FindNumsAppearOnce(nums,num1,num2);
         System.out.println(num1[0]+"---"+num2[0]);*/
+        /*66.
+        String s="student. a am I";
+        javaCodes j=new javaCodes();
+        System.out.println(j.ReverseSentence(s));*/
 
     }
 }
