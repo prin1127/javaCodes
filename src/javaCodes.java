@@ -1360,6 +1360,323 @@ public class javaCodes {
         return (int) Math.pow(10, m-1);
     }
      */
+    /*51.
+    把数组排成最小的数
+    输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+    例如输入数组 {3，32，321}，则打印出这三个数字能排成的最小数字为 321323。
+    可以看成是一个排序问题，在比较两个字符串 S1 和 S2 的大小时，应该比较的是 S1+S2 和 S2+S1 的大小，
+    如果 S1+S2< S2+S1，那么应该把 S1 排在前面，否则应该把 S2 排在前面。
+    public String PrintMinNumber(int[] numbers) {
+        if (numbers == null || numbers.length == 0)
+            return "";
+        int n = numbers.length;
+        String[] nums = new String[n];
+        for (int i = 0; i < n; i++)
+            nums[i] = numbers[i] + "";//int转String
+        Arrays.sort(nums, (s1, s2) -> (s1 + s2).compareTo(s2 + s1));
+        String ret = "";
+        for (String str : nums)
+            ret += str;
+        return ret;
+    }
+     */
+    /*52.
+    把数字翻译成字符串
+    给定一个数字，按照如下规则翻译成字符串：1 翻译成“a”，2 翻译成“b”... 26 翻译成“z”。一个数字有多种翻译可能，
+    例如 12258 一共有 5 种，分别是 abbeh，lbeh，aveh，abyh，lyh。实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+    public int numDecodings(String s) {
+        int n = s.length();
+        int[] f = new int[n + 1];
+        f[0] = 1;
+        for (int i = 1; i <= n; ++i) {
+            if (s.charAt(i - 1) != '0') {
+                f[i] += f[i - 1];
+            }
+            if (i > 1 && s.charAt(i - 2) != '0' && ((s.charAt(i - 2) - '0') * 10 + (s.charAt(i - 1) - '0') <= 26)) {
+                f[i] += f[i - 2];
+            }
+        }
+        return f[n];
+    }
+    //进一步节省空间：分别用a,b,c来代替f[i],f[i - 1],f[i - 2]
+     */
+    /*53.
+    礼物的最大价值
+    在一个 m*n 的棋盘的每一个格都放有一个礼物，每个礼物都有一定价值（大于 0）。从左上角开始拿礼物，每次向右或向下移动一格，直到右下角结束。
+    给定一个棋盘，求拿到礼物的最大价值。
+    动态规划
+    public int getMost(int[][] values) {
+        if (values == null || values.length == 0 || values[0].length == 0)
+            return 0;
+        int n = values.length;
+        int[][] dp = new int[n][n];
+        dp[0][0] = values[0][0];
+        for (int i = 1; i < n; i++) {
+            dp[0][i] = dp[0][i-1]+values[0][i];//第一行
+            dp[i][0] =dp[i-1][0]+values[i][0];//第一列
+        }
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]) + values[i][j];//动态规划
+            }
+        }
+        return dp[n - 1][n - 1];
+    }
+     */
+    /*54.
+    最长不含重复字符的子字符串
+    输入一个字符串（只包含 a~z 的字符），求其最长不含重复字符的子字符串的长度。
+    例如对于 arabcacfr，最长不含重复字符的子字符串为 rabc或acfr，长度为 4。
+    采用动态规划，首先定义函数f(i)表示以第i个字符为结尾的不包含重复字符的子字符串的最长长度,则有以下三种情形：
+    ①第i个字符在之前都没有出现过，则f(i) = f(i-1)+1
+    ②第i个字符在之前出现过，但是在f(i-1)这个子串的前面出现过，则最长还是f(i-1)+1
+    ③第i个字符在之前出现过，不过在f(i-1)的这个子串的中间出现过，则f(i)=这两个重复字符的中间值
+    public int longestSubStringWithoutDuplication(String str) {
+        int curLen = 0;//当前长度
+        int maxLen = 0;//最大长度
+        int[] preIndexs = new int[26];//保存a-z字符出现位置
+        Arrays.fill(preIndexs, -1);//-1表示没出现过
+        for (int i = 0; i < str.length(); i++) {
+            int c = str.charAt(i) - 'a';
+            int preI = preIndexs[c];
+            if (preI == -1 || i - preI > curLen) {//没出现过或在f(i-1)子串的前面出现
+                curLen++;
+            } else {//在f(i-1)子串中出现
+                maxLen = Math.max(maxLen, curLen);//此时需要对字符串“截断”，因此需要先保留此时的长度
+                curLen = i - preI;
+            }
+            preIndexs[c] = i;//更新当前字符最近一次的出现位置
+        }
+        maxLen = Math.max(maxLen, curLen);
+        return maxLen;
+    }
+     */
+    /*55.
+    丑数
+    把只包含因子 2、3 和 5 的数称作丑数（Ugly Number）。例如 6、8 都是丑数，但 14 不是，因为它包含因子 7。
+    习惯上我们把 1 当做是第一个丑数。求按从小到大的顺序的第 N 个丑数。
+    本题自己是有思路的，丑数能够分解成2x3y5z,所以只需要把得到的丑数不断地乘以2、3、5之后并放入他们应该放置的位置即可。
+    而难点就在于如何有序的放在合适的位置。
+    1乘以 （2、3、5）=2、3、5；2乘以（2、3、5）=4、6、10；3乘以（2、3、5）=6,9,15；5乘以（2、3、5）=10、15、25；
+    从这里我们可以看到如果不加策略地添加丑数是会有重复并且无序，
+    而在2x，3y，5z中，如果x=y=z那么最小丑数一定是乘以2的，但关键是有可能存在x》y》z的情况，
+    所以我们要维持三个指针来记录当前乘以2、乘以3、乘以5的最小值，
+    当其被选为新的最小值后，要把相应的指针+1；
+    因为这个指针会逐渐遍历整个数组，因此最终数组中的每一个值都会被乘以2、乘以3、乘以5，
+    也就是实现了我们最开始的想法，只不过不是同时成乘以2、3、5，而是在需要的时候乘以2、3、5.
+    public int GetUglyNumber_Solution(int N) {
+        if (N <= 6)
+            return N;
+        int i2 = 0, i3 = 0, i5 = 0;//因子2、3和5的数量，也是指针
+        int[] dp = new int[N];
+        dp[0] = 1;
+        for (int i = 1; i < N; i++) {
+            int next2 = dp[i2] * 2, next3 = dp[i3] * 3, next5 = dp[i5] * 5;//即x、y、z不一定相等
+            dp[i] = Math.min(next2, Math.min(next3, next5));//最小值，保证从小到大的顺序
+            if (dp[i] == next2)//为了防止重复，三个if都得能走到
+                i2++;
+            if (dp[i] == next3)
+                i3++;
+            if (dp[i] == next5)
+                i5++;
+        }
+        return dp[N - 1];
+    }
+     */
+    /*56.
+    第一个只出现一次的字符位置
+    在一个字符串中找到第一个只出现一次的字符，并返回它的位置。
+    最直观的解法是使用 HashMap 对出现次数进行统计，但是考虑到要统计的字符范围有限，因此可以使用整型数组代替 HashMap。
+    public int FirstNotRepeatingChar(String str) {
+        int[] cnts = new int[128];
+        for (int i = 0; i < str.length(); i++)
+            cnts[str.charAt(i)]++;
+        for (int i = 0; i < str.length(); i++)
+            if (cnts[str.charAt(i)] == 1)
+                return i;
+        return -1;
+    }
+    // bs2 bs1 两个比特位表示出现0次、1次和多次（00,01,11）
+    public int FirstNotRepeatingChar(String str) {
+        BitSet bs1 = new BitSet(128);
+        BitSet bs2 = new BitSet(128);
+        for (char c : str.toCharArray()) {
+            if (!bs1.get(c) && !bs2.get(c))//第一次出现
+                bs1.set(c); // 0 0 -> 0 1
+            else if (bs1.get(c) && !bs2.get(c))//出现过一次的又出现
+                bs2.set(c); // 0 1 -> 1 1
+        }//已经出现过两次以上（11）的不需要再操作
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (bs1.get(c) && !bs2.get(c)) // 0 1
+                return i;//找到第一个则返回
+        }
+        return -1;
+    }
+     */
+    /*57.
+    数组中的逆序对
+    在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，求出这个数组中的逆序对的总数（对1000000007取模）。
+    归并排序：
+    ①递归划分整个区间为基本相等的左右两个区间；
+    ②合并两个有序区间
+    private long cnt = 0;
+    private int[] tmp; // 在这里声明辅助数组，而不是在 merge()递归函数中声明，节省花销
+    public int InversePairs(int[] nums) {
+        tmp = new int[nums.length];
+        mergeSort(nums, 0, nums.length - 1);
+        return (int) (cnt % 1000000007);
+    }
+    private void mergeSort(int[] nums, int l, int h) {
+        if (h - l < 1)
+            return;
+        int m = l + (h - l) / 2;
+        mergeSort(nums, l, m);
+        mergeSort(nums, m + 1, h);
+        merge(nums, l, m, h);
+    }
+    private void merge(int[] nums, int low, int middle, int high) {
+        int i = low, j = middle + 1, k = low;
+        while (i <= middle || j <= high) {
+            if (i > middle)//j <= high
+                tmp[k] = nums[j++];
+            else if (j > high)//i <= middle
+                tmp[k] = nums[i++];
+            else if (nums[i] <= nums[j])
+                tmp[k] = nums[i++];
+            else {//逆序，nums[i] > nums[j]
+                tmp[k] = nums[j++];
+                this.cnt += middle - i + 1; //有序区间，nums[i] > nums[j]，说明 nums[i...mid] 都大于 nums[j]
+            }
+            k++;
+        }
+        for (int q = low; q <= high; q++)
+            nums[q] = tmp[q];//修改nums
+    }
+     */
+
+    /*58.
+    两个链表的第一个公共结点
+    设 A 的长度为 a + c，B 的长度为 b + c，其中 c 为尾部公共部分长度，可知 a + c + b = b + c + a。
+    当访问链表 A 的指针访问到链表尾部时，令它从链表 B 的头部重新开始访问链表 B；
+    同样地，当访问链表 B 的指针访问到链表尾部时，令它从链表 A 的头部重新开始访问链表 A。
+    这样就能控制访问 A 和 B 两个链表的指针能同时访问到交点。
+    public ListNode FindFirstCommonNode(ListNode pHead1, ListNode pHead2) {
+        ListNode l1 = pHead1, l2 = pHead2;
+        while (l1 != l2) {
+            l1 = (l1 == null) ? pHead2 : l1.next;
+            l2 = (l2 == null) ? pHead1 : l2.next;
+        }
+        return l1;
+    }
+     */
+    /*59.
+    数字在排序数组中出现的次数
+    Input:
+        nums = 1, 2, 3, 3, 3, 3, 4, 6
+        K = 3
+    Output:4
+    排序数组，则只需找到数字第一次出现的位置和下一个数字第一次出现的位置，做个减法即可
+    public int GetNumberOfK(int[] nums, int K) {
+        int first = binarySearch(nums, K);
+        int last = binarySearch(nums, K + 1);//k+1即使不存在，也会指向大于k的第一个位置
+        return (first == nums.length || nums[first] != K) ? 0 : last - first;//不存在则指向数组末尾或下一数字位置
+    }
+    private int binarySearch(int[] nums, int K) {
+        int l = 0, h = nums.length;
+        while (l < h) {//二分查找
+            int m = l + (h - l) / 2;
+            if (nums[m] >= K)
+                h = m;
+            else
+                l = m + 1;//下一位置
+        }
+        return l;
+    }
+    //其实直接遍历也很快的
+     */
+    /*60.
+    二叉查找树的第 K 个结点
+    给定一棵二叉搜索树，请找出其中的第k小的TreeNode结点。
+    利用二叉查找树中序遍历有序的特性
+    private TreeNode ret;
+    private int cnt = 0;
+    public TreeNode KthNode(TreeNode pRoot, int k) {
+        inOrder(pRoot, k);
+        return ret;
+    }
+    private void inOrder(TreeNode root, int k) {
+        if (root == null || cnt >= k)
+            return;
+        inOrder(root.left, k);
+        cnt++;
+        if (cnt == k)
+            ret = root;
+        inOrder(root.right, k);
+    }
+     */
+    /*61.
+    二叉树的深度
+    从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。
+    public int TreeDepth(TreeNode root) {
+        return root == null ? 0 : 1 + Math.max(TreeDepth(root.left), TreeDepth(root.right));
+    }
+    */
+    /*62.
+    平衡二叉树
+    输入一棵二叉树，判断该二叉树是否是平衡二叉树。
+    在这里，我们只需要考虑其平衡性，不需要考虑其是不是排序二叉树
+    平衡二叉树（Balanced Binary Tree），具有以下性质：它是一棵空树或它的左右两个子树的高度差的绝对值不超过1，
+    并且左右两个子树都是一棵平衡二叉树。
+    注：我们约定空树是平衡二叉树。
+    private boolean isBalanced = true;
+    public boolean IsBalanced_Solution(TreeNode root) {
+        height(root);
+        return isBalanced;
+    }
+    private int height(TreeNode root) {
+        if (root == null || !isBalanced)
+            return 0;
+        int left = height(root.left);
+        int right = height(root.right);
+        if (Math.abs(left - right) > 1)
+            isBalanced = false;
+        return 1 + Math.max(left, right);
+    }
+     */
+    /*63.
+    数组中只出现一次的数字
+    一个整型数组里除了两个数字之外，其他的数字都出现了两次，找出这两个数。
+    两个不相等的元素在位级表示上必定会有一位存在不同，将数组的所有元素异或得到的结果为不存在重复的两个元素异或的结果。
+    diff&=-diff得到diff最右侧不为 0 的位，也就是不存在重复的两个元素在位级表示上最右侧不同的那一位，利用这一位就可以将两个元素区分开来。
+    ^异或（相同为0，不同为1）
+    负数二进制为补码（先取反得反码，再末位取反），&逻辑与（11为1,其余为0）
+    //{1,3,4,5,1,5,6,6}
+    public static void FindNumsAppearOnce(int[] nums, int[] num1, int[] num2) {
+        int diff = 0;
+        //System.out.print("diff:");
+        for (int num : nums){
+            diff ^= num;//得到两个单身元素不相同的位数，例如7，即111，则表示3位都不相同
+            //System.out.print(diff+" ");
+        }
+        //System.out.println();
+        diff &= -diff;//找到两个单身元素不相同的位数之一（最右一个），根据该位即可区分两个元素（不是单身的元素必定在同一组里）
+        //System.out.println("diff:"+diff);
+        for (int num : nums) {
+            if ((num & diff) == 0)//分两组
+                num1[0] ^= num;//异或可以去掉不是单身的元素
+            else
+                num2[0] ^= num;
+            //System.out.print(num1+" ");
+            //System.out.print(num2+" ");
+        }
+    }
+    */
+
+
+
+
+
 
 
 
@@ -1488,8 +1805,14 @@ public class javaCodes {
             s.Insert(ch);
             caseout = caseout+"-"+s.FirstAppearingOnce();
         }
-        System.out.println(caseout);
-         */
+        System.out.println(caseout);*/
+        /*63.
+        int[]nums={1,3,4,5,1,5,6,6};
+        int[] num1={0};
+        int[] num2={0};
+        FindNumsAppearOnce(nums,num1,num2);
+        System.out.println(num1[0]+"---"+num2[0]);*/
+
     }
 }
 
