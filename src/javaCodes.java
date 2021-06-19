@@ -2011,7 +2011,28 @@ public class javaCodes {
 
 
 
+    public static String handleMultiple(String str){
+        if(str!=null&&str.length()>0){
+            switch (str.trim().substring(0,1)){
+                case "1": return "①";
+                case "2": return "②";
+                case "3": return "③";
+                case "4": return "④";
+                case "5": return "⑤" ;
+                case "6": return "⑥" ;
+                case "7": return "⑦" ;
+                case "8": return "⑧" ;
+                case "9": return "⑨" ;
+            }
 
+            return str;
+
+        }else if(str == null){
+            return null;
+        }else {
+            return "";
+        }
+    }
 
         public static void main(String[] args) {
         /*1.
@@ -2162,6 +2183,33 @@ public class javaCodes {
         javaCodes j=new javaCodes();
         System.out.println(j.StrToInt(str)); */
 
+
+            /*String iT = "1车损险 2自燃险 3交强险 4第三者责任险";
+            char[] nuiT = iT.toCharArray();
+            String nownumiT = "";
+            for (char c : nuiT) {
+                if (c >= '0' && c <= '9') {
+                    nownumiT = nownumiT + handleMultiple(Character.toString(c));
+                }
+            }
+            System.out.println(nownumiT);*/
+            String str="";
+            String str2=null;
+            System.out.println(str);
+
+            /*HashMap datamap=new HashMap();
+            String str="";
+            System.out.println(str.charAt(0));
+            System.out.println(str.replaceAll("\\d+",""));
+            System.out.println(str.length());
+            System.out.println(str==null);
+            System.out.println(str.isEmpty());
+            if(!str.isEmpty()){
+                datamap.put("test",str);
+            }else{
+                datamap.put("test","");
+            }
+            System.out.println("test:"+datamap.get("test"));*/
     }
 }
 
