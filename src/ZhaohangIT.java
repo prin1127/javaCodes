@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
-class demo {
+class ZhaohangIT {
     public static int fx(int n) {
         return n;
     }
